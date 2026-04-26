@@ -59,7 +59,7 @@ void User::addFriend(string friendId)
 {
     for (int i = 0; i < friendCount; i++)
     {
-        if (friendIDs[i] == friendId)
+        if (friendIDs[i] == friendId) // checks if new id already exists
             return;
     }
     string* temp = new string[friendCount + 1]; // larger array of string type to store friend IDs
@@ -79,7 +79,7 @@ void User::addLikedPage(string pageId)
 {
     for (int i = 0; i < friendCount; i++)
     {
-        if (likedPageIDs[i] == pageId)
+        if (likedPageIDs[i] == pageId) // checks if new id already exists
             return;
     }
     string* temp = new string[likedPageCount + 1]; // larger array of string type to store likedpage IDs
