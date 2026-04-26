@@ -69,15 +69,15 @@ void User::addFriend(string friendId)
     }
     temp[friendCount] = friendId; //adding new id
 
-    delete friendID;
-    friendID = temp; // putting everything in friend id array
+    delete[] friendIDs;
+    friendIDs = temp; // putting everything in friend id array
     friendCount++;
 }
 
 //adding a Liked Page
 void User::addLikedPage(string pageId)
 {
-    for (int i = 0; i < friendCount; i++)
+    for (int i = 0; i < likedPageCount; i++)
     {
         if (likedPageIDs[i] == pageId) // checks if new id already exists
             return;
@@ -89,7 +89,7 @@ void User::addLikedPage(string pageId)
     }
     temp[likedPageCount] = pageId;// adding new id
 
-    delete likedPageIDs;
+    delete[] likedPageIDs;
     likedPageIDs = temp; // putting everything in liked page ids aray
     likedPageCount++;
 }

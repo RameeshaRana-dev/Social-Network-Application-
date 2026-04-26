@@ -1,21 +1,20 @@
 #pragma once
 #include <string>
-using namespace std;
 
 class Page
 {
 private:
-	string id;
-	string title;
+	std::string id;
+	std::string title;
 public:
 	//Default Constructor
 	Page();
 	//Parametrised Constructor 
-	Page(string id, string title);
+	Page(std::string id, std::string title);
 
 	//getters
-	string getID() const;
-	string getTitle()  const;
+	std::string getID() const;
+	std::string getTitle()  const;
 
 	//Display
 	void display() const;
