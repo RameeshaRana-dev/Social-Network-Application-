@@ -10,6 +10,7 @@ private:
 public:
 	//Default Constructor
 	Page();
+	//Parametrised Constructor 
 	Page(string id, string title);
 
 	//getters
