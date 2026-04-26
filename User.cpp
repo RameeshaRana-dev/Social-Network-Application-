@@ -65,7 +65,7 @@ void User::addFriend(string friendId)
     string* temp = new string[friendCount + 1]; // larger array of string type to store friend IDs
     for (int i = 0; i < friendCount; i++)
     {
-        temp[i] = friendIDs[i]; // copyingg to tem
+        temp[i] = friendIDs[i]; // copyingg to temp
     }
     temp[friendCount] = friendId; //adding new id
 
