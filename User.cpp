@@ -57,6 +57,11 @@ int User::getLikedPageCount() const
  // adding a friend
 void User::addFriend(string friendId)
 {
+    for (int i = 0; i < friendCount; i++)
+    {
+        if (friendIDs[i] == friendId)
+            return;
+    }
     string* temp = new string[friendCount + 1]; // larger array of string type to store friend IDs
     for (int i = 0; i < friendCount; i++)
     {
@@ -72,6 +77,11 @@ void User::addFriend(string friendId)
 //adding a Liked Page
 void User::addLikedPage(string pageId)
 {
+    for (int i = 0; i < friendCount; i++)
+    {
+        if (likedPageIDs[i] == pageId)
+            return;
+    }
     string* temp = new string[likedPageCount + 1]; // larger array of string type to store likedpage IDs
     for (int i = 0; i < likedPageCount; i++)
     {
