@@ -44,6 +44,33 @@ Page* AppBackend::findPage(string pageId) const
 	}
 	return nullptr;  // page not found
 }
+int AppBackend:: getPostCount() const 
+{ 
+	return postCount;
+}
+int AppBackend::getUserCount() const 
+{ 
+	return userCount;
+}
+int AppBackend::getPageCount() const
+{ 
+	return pageCount;
+}
+
+// current user getter
+string AppBackend::getCurrentUserName() const
+{
+	if (currentUser != nullptr)
+		return currentUser->getName();
+	return "";
+}
+
+string AppBackend::getCurrentUserId() const
+{
+	if (currentUser != nullptr)
+		return currentUser->getId();
+	return "";
+}
 void AppBackend::setCurrentUser(string userId)
 {
 	User* user = findUser(userId);

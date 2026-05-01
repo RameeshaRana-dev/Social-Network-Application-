@@ -23,16 +23,22 @@ private:
 	int systemMonth;
 	int systemYear;
 	//Helper functions to find the index of post, user and page in their respective arrays using their IDs
-	Post* findPost(string postId) const;
-	User* findUser(string userId) const;
-	Page* findPage(string pageId) const;
 	bool isUserLoggedIn() const;//checking if the user is logged in or not
 	Post* getValidPost(string postId) const;
 	void trimLeading(string& str);
 public:
-	AppBackened();
+	AppBackend();
 	void setCurrentUser(string Userid);//to set the current user using their ID
 	void setSystemDate(int day, int month, int year);
+	Post* findPost(string postId) const;
+	User* findUser(string userId) const;
+	Page* findPage(string pageId) const;
+	int getPostCount() const;
+	int getUserCount() const;
+	int getPageCount() const;
+	string getCurrentUserName() const;
+		// current user getter
+	string getCurrentUserId() const;
 	void loadPages();
 	void loadUsers();
 	void loadPosts();
@@ -45,6 +51,6 @@ public:
 	void ViewPage(string pageId);
 	void SeeMemory();
 	void shareMemory(string postId, string text);//sharing memories by creating a new post 
-	~AppBackened();
+	~AppBackend();
 };
 
