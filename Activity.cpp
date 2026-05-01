@@ -11,7 +11,7 @@ Activity::Activity() :Post()//Setting default values
 Activity::Activity(string id, string text, string sharedById,
 	int day, int month, int year,
 	int activityType, string activityValue)
-	: Post(id, text, sharedById, day, month, year, 2)
+	: Post(id, text, sharedById, day, month, year, 2,"")
 	// postType = 2 always — Activity post never changes this
 {
 	// validate activity type strictly 1 to 4
