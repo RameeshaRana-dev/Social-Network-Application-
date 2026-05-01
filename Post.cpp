@@ -16,10 +16,10 @@ Post::Post()
 	postType = 0;
 	likedBy = new string[10];
 	comments = new Comment[10];
+	imagePath = "";
 
 }
-Post::Post(string id, string text, string sharedById, int day, int month, int year, int postType)
-
+Post::Post(string id, string text, string sharedById, int day, int month, int year, int postType, string imagePath)
 {
 	this->ID = id;
 	this->text = text;
@@ -32,6 +32,7 @@ Post::Post(string id, string text, string sharedById, int day, int month, int ye
 	this->commentCount = 0;
 	this->likedBy = new string[10];
 	this->comments = new Comment[10];
+	this->imagePath = imagePath;
 }
 string Post::getID() const
 {
@@ -114,6 +115,15 @@ void Post::addComment(Comment* c)
 	commentCount++;////moving forward for empty slots (incrementing comment counts)
 
 }
+void Post::setImagePath(string path)
+{
+	imagePath = path;
+}
+
+string Post::getImagePath() const
+{
+	return imagePath;
+}
 void Post::display() const
 {
 	// displaying  post with date
@@ -121,7 +131,11 @@ void Post::display() const
 	cout << "\"" << text << "\"";
 	cout << " ...(" << day << "/" << month
 		<< "/" << year << ")" << endl;
-
+	// show image if exists
+	if (!imagePath.empty())
+	{
+		cout << " [Image: " << imagePath << "]" << endl;
+	}
 	// displaying  all comments under post 
 	for (int i = 0; i < commentCount; i++)
 	{

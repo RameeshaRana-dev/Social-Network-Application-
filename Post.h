@@ -2,6 +2,7 @@
 #include <string>
 #include "Comment.h"
 using namespace std;
+
 class Post
 {
 private:
@@ -15,14 +16,14 @@ private:
     int likeCount;
     Comment* comments;
     int commentCount;
-    int postType;     // 1=simple , 2=activity
-
+    int postType;          // 1=simple , 2=activity
+    string imagePath;
 public:
     // default constructor
     Post();
     // parameterized constructor
     Post(string id, string text, string sharedById,
-        int day, int month, int year, int postType);
+        int day, int month, int year, int postType, string imagePath);
     // getters
     string getID() const;
     string getText() const;
@@ -35,7 +36,8 @@ public:
     int getPostType() const;
     string* getLikedBy() const;
     Comment* getComments() const;
-
+    void setImagePath(string path);
+    string getImagePath() const;
     // adding likes
     void addLike(string id);
     //adding comments
