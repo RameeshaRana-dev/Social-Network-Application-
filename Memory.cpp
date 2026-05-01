@@ -8,7 +8,7 @@ Memory::Memory() : Post() //Default Constructor
 Memory::Memory(string id, string text, string sharedById,
     int day, int month, int year,
     Post* originalPost)
-    : Post(id, text, sharedById, day, month, year, 3)
+    : Post(id, text, sharedById, day, month, year, 3,"")
 {
     this->Original_Post = originalPost;
 }
