@@ -44,32 +44,34 @@ Page* AppBackend::findPage(string pageId) const
 	}
 	return nullptr;  // page not found
 }
-int AppBackend:: getPostCount() const 
+int AppBackend::getPostCount() const 
 { 
-	return postCount;
+	return postCount; 
 }
-int AppBackend::getUserCount() const 
+int AppBackend::getUserCount() const
 { 
-	return userCount;
+	return userCount; 
 }
-int AppBackend::getPageCount() const
+int AppBackend::getPageCount() const 
 { 
-	return pageCount;
+	return pageCount; 
 }
-
-// current user getter
-string AppBackend::getCurrentUserName() const
+User* AppBackend::getCurrentUser() const
 {
-	if (currentUser != nullptr)
-		return currentUser->getName();
-	return "";
+	return currentUser;
 }
-
-string AppBackend::getCurrentUserId() const
+Post** AppBackend::getPosts() const 
+{ 
+	return posts;
+}
+User** AppBackend::getUsers() const 
+{ 
+	return users;
+}
+Page** AppBackend::getPages() const
 {
-	if (currentUser != nullptr)
-		return currentUser->getId();
-	return "";
+	
+	return pages;
 }
 void AppBackend::setCurrentUser(string userId)
 {
@@ -86,6 +88,7 @@ void AppBackend::setCurrentUser(string userId)
 			<< " not found!!!" << endl;
 	}
 }
+
 void AppBackend::setSystemDate(int day, int month, int year)
 {
 	systemDay = day;
@@ -93,6 +96,18 @@ void AppBackend::setSystemDate(int day, int month, int year)
 	systemYear = year;
 	cout << "System Date: " << day << "/"
 		<< month << "/" << year << endl;
+}
+int AppBackend::getSystemDay() const
+{
+	return systemDay;
+}
+int AppBackend::getSystemMonth() const
+{
+	return systemMonth; 
+}
+int AppBackend::getSystemYear() const 
+{ 
+	return systemYear; 
 }
 void AppBackend::trimLeading(string& str)
 {
