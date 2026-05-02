@@ -1,4 +1,4 @@
-#include "AppUI.h
+#include "AppUI.h"
 #include "AppBackend.h"
 #include <iostream>
 using namespace std;
@@ -84,10 +84,10 @@ void AppUI::viewFriendList()
 		cout << "No user is currently set!" << endl;
 		return;
 	}
-	
-	cout << "Friend List of " << currentUser->getName() << : << endl;
 
-	string* friends = currentUser->getFriendsIDs(); //storing the friend ids
+	cout << "Friend List of " << currentUser->getName() << ":" << endl;
+
+	string* friends = currentUser->getFriendIDs(); //storing the friend ids
 	int fCount = currentUser->getFriendCount(); //storing friend cout 
 
 	if (fCount == 0) //checking if pointer is empty/null
@@ -97,14 +97,15 @@ void AppUI::viewFriendList()
 	}
 	for (int i = 0; i < fCount; i++)
 	{
-		User* u = backend->findUser(friends[i]); 
+		User* u = backend->findUser(friends[i]);
 		if (u != nullptr)
 		{
-			cout << friends[i] << " - " << u->getName()<< endl;
+			cout << friends[i] << " - " << u->getName() << endl;
 		}
 
 	}
-// printing liked pagge of th user
+}
+// pri nting liked pagge of th user
 void AppUI::viewLikedPages()
 {
 	if (backend == nullptr)
@@ -132,12 +133,12 @@ void AppUI::viewLikedPages()
 		Page* p = backend->findPage(likedPages[i]); // obtaining name against ids
 		if (p != nullptr)
 		{
-			cout << likedPages[i] << ' - ' << p->getTitle() << endl;
+			cout << likedPages[i] << " - " << p->getTitle() << endl;
 		}
 	}
 }
 // Helpers for ensuring accurate date check in view home
-bool AppUI::isLeapYear(int y) const //check if the year is leap 
+bool AppUI::isLeapYear(int y)  //check if the year is leap 
 {
 	return ((y % 4) == 0 && (y % 100) != 0) || (y % 400 == 0);
 }
@@ -213,7 +214,7 @@ void AppUI::viewHome()
 	string* likedPages = currentUser->getLikedPageIDs(); // getting likedpage ids
 	int lCount = currentUser->getLikedPageCount();
 
-	string* friends = currentUser->getFriendsIDs(); //getting the friend ids
+	string* friends = currentUser->getFriendIDs(); //getting the friend ids
 	int fCount = currentUser->getFriendCount();
 
 	bool foundAny = false;// checks if any recent posts found
@@ -260,7 +261,7 @@ void AppUI::viewHome()
 		{ 
 			isValid = true;
 		}
-		else if (isPreviousDay(pDay, pMonth, pYear)) // checks if the post is of previous day
+		else if (isPreviousDay(postDay, postMonth, postYear)) // checks if the post is of previous day
 		{
 			isValid = true;
 		}

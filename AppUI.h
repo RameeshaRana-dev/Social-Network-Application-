@@ -35,8 +35,8 @@ public:
 	void viewHome();
 	void viewProfile();
 	//Helper function for viewHome
-	bool isLeapYear(int y) const;
-	int getLastDay(int m, int y);
+	bool isLeapYear(int y) ;
+	int getLastDay(int m, int y) ;
 	bool isPreviousDay(int pDay, int pMonth, int pYear);
 	
 };

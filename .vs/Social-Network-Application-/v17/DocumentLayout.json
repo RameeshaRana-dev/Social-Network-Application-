@@ -7,10 +7,6 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AppUI.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\HP\\Desktop\\OOP project\\Social-Network-Application-\\AppUI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AppUI.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\HP\\Desktop\\OOP project\\Social-Network-Application-\\User.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:User.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -34,7 +30,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "User.h",
               "DocumentMoniker": "C:\\Users\\HP\\Desktop\\OOP project\\Social-Network-Application-\\User.h",
               "RelativeDocumentMoniker": "User.h",
@@ -42,8 +38,7 @@
               "RelativeToolTip": "User.h",
               "ViewState": "AgIAAAoAAAAAAAAAAAAqwBkAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-26T11:16:22.231Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-26T11:16:22.231Z"
             },
             {
               "$type": "Document",
@@ -53,14 +48,14 @@
               "RelativeDocumentMoniker": "AppUI.cpp",
               "ToolTip": "C:\\Users\\HP\\Desktop\\OOP project\\Social-Network-Application-\\AppUI.cpp",
               "RelativeToolTip": "AppUI.cpp",
-              "ViewState": "AgIAAAcBAAAAAAAAAAAAABwBAAACAAAAAAAAAA==",
+              "ViewState": "AgIAAIUAAAAAAAAAAAAAAJMAAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-05-01T20:44:03.79Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "Page.h",
               "DocumentMoniker": "C:\\Users\\HP\\Desktop\\OOP project\\Social-Network-Application-\\Page.h",
               "RelativeDocumentMoniker": "Page.h",
@@ -68,12 +63,11 @@
               "RelativeToolTip": "Page.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-26T16:23:16.384Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-26T16:23:16.384Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "User.cpp",
               "DocumentMoniker": "C:\\Users\\HP\\Desktop\\OOP project\\Social-Network-Application-\\User.cpp",
               "RelativeDocumentMoniker": "User.cpp",
@@ -82,40 +76,6 @@
               "ViewState": "AgIAADkAAAAAAAAAAAAAAEMAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-26T14:13:22.913Z"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "Orientation": 0,
-      "VerticalTabListWidth": 256,
-      "FloatingWindowState": {
-        "Id": "6ca0a053-1826-4396-926c-f4eb1d62d541",
-        "Display": 0,
-        "X": 188,
-        "Y": -3,
-        "Width": 1054,
-        "Height": 651,
-        "WindowState": 0
-      },
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AppUI.h",
-              "DocumentMoniker": "C:\\Users\\HP\\Desktop\\OOP project\\Social-Network-Application-\\AppUI.h",
-              "RelativeDocumentMoniker": "AppUI.h",
-              "ToolTip": "C:\\Users\\HP\\Desktop\\OOP project\\Social-Network-Application-\\AppUI.h",
-              "RelativeToolTip": "AppUI.h",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAswCgAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-05-01T20:44:05.816Z",
-              "EditorCaption": ""
             }
           ]
         }
