@@ -357,3 +357,176 @@ void AppUI::viewProfile()
 	delete[] userPosts;
 }
 
+int AppUI::getValidChoice(int min, int max)
+{
+	int choice;
+
+	while (true)
+	{
+		cout << "Enter choice: ";
+
+		if (!(cin >> choice))
+		{
+			cin.clear();
+			cin.ignore(1000, '\n');
+			cout << "Invalid input! Please enter numbers only.\n";
+			continue;
+		}
+
+		if (choice >= min && choice <= max)
+		{
+			return choice;
+		}
+
+		cout << "Invalid choice! Please enter between "
+			<< min << " and " << max << ".\n";
+	}
+}  
+
+void AppUI::run()
+{
+	while (true)
+	{
+		cout << "\n==============================\n";
+		cout << "1. View Home\n";
+		cout << "2. Like Post\n";
+		cout << "3. Add Comment\n";
+		cout << "4. View Post\n";
+		cout << "5. View Page\n";
+		cout << "6. See Memories\n";
+		cout << "7. View Liked List\n";
+		cout << "8. Share Memory\n";
+		cout << "9. View Liked Pages\n";
+		cout << "10. View Profile\n";
+		cout << "11. View Friend List\n";
+		cout << "12. Set Current User\n";
+		cout << "13. Set System Date\n";
+		cout << "14. Exit\n";
+		cout << "==============================\n";
+
+		choice = getValidChoice(1, 14);
+		switch (choice)
+		{
+		case 1:
+			viewHome();
+			break;
+
+		case 2:
+		{
+			string postId;
+			cout << "Enter post ID: ";
+			cin >> postId;
+			backend->likePost(postId);
+			break;
+		}
+
+		case 3:
+		{
+			string postId, text;
+			cout << "Enter post ID: ";
+			cin >> postId;
+			cin.ignore();
+			getline(cin, text);
+			backend->addComment(postId, text);
+			break;
+		}
+
+		case 4:
+		{
+			string postId;
+			cout << "Enter post ID: ";
+			cin >> postId;
+			backend->ViewPost(postId);
+			break;
+		}
+
+		case 5:
+		{
+			string pageId;
+			cout << "Enter page ID: ";
+			cin >> pageId;
+			backend->ViewPage(pageId);
+			break;
+		}
+
+		case 6:
+			backend->SeeMemory();
+			break;
+
+		case 7:
+		{
+			string postId;
+			cout << "Enter post ID: ";
+			cin >> postId;
+			backend->viewLikedList(postId);
+			break;
+		}
+
+		case 8:
+		{
+			string postId, text;
+			cout << "Enter post ID: ";
+			cin >> postId;
+			cin.ignore();
+			getline(cin, text);
+			backend->shareMemory(postId, text);
+			break;
+		}
+
+		case 9:
+			viewLikedPages();
+			break;
+
+		case 10:
+			viewProfile();
+			break;
+
+		case 11:
+			viewFriendList();
+			break;
+
+		case 12:
+		{
+			string newId;
+
+			while (true)
+			{
+				cout << "Enter user ID: ";
+				cin >> newId;
+
+				setCurrentUser(newId);
+
+				if (backend->getCurrentUser() != nullptr)
+					break;
+
+				cout << "Invalid user ID. Try again.\n";
+			}
+			break;
+		}
+
+		case 13:
+		{
+			int d, m, y;
+
+			cout << "Enter day: ";
+			cin >> d;
+
+			cout << "Enter month: ";
+			cin >> m;
+
+			cout << "Enter year: ";
+			cin >> y;
+
+			setSystemDate(d, m, y);
+			break;
+		}
+
+		case 14:
+			cout << "Exiting system... Goodbye!\n";
+			return;
+
+		default:
+			cout << "Invalid choice!\n";
+		}
+	}
+}

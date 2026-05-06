@@ -38,5 +38,6 @@ public:
 	bool isLeapYear(int y) ;
 	int getLastDay(int m, int y) ;
 	bool isPreviousDay(int pDay, int pMonth, int pYear);
-	
+	AppUI getValidChoice(int min, int max);
+	void AppUI run();
 };
