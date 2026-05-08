@@ -103,6 +103,11 @@ void Post::addLike(string id)
 }
 void Post::addComment(Comment* c)
 {
+	if (c == nullptr)
+	{
+		cout << "Invalid comment!" << endl;
+		return;
+	}
 	//Check for comments limits
 	if (commentCount >= 10)
 	{
