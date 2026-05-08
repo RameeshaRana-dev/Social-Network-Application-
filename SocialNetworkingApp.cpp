@@ -344,7 +344,7 @@ void SocialNetworkingApp::drawHomeFeed()
             if (p) posterName = p->getTitle();
         }
 
-        if (!post) continue;   // 🔥 MUST ADD THIS
+        if (!post) continue;   
 
         Activity* act = dynamic_cast<Activity*>(post);
 
@@ -360,13 +360,12 @@ void SocialNetworkingApp::drawHomeFeed()
         {
             headerLine = "--- " + posterName + " shared";
         }
-
         int visibleComments = min(post->getCommentCount(), 3);
         float cardHeight = 170.f + (visibleComments * 38.f);
         RectangleShape card(Vector2f(cardWidth, cardHeight));
         card.setPosition(cardX, currentY);
         card.setFillColor(cardColor);
-        card.setOutlineThickness(i == selectedPost ? 3 : 1);
+        card.setOutlineThickness(i == selectedPost ? 3.f : 1.f);
         card.setOutlineColor(i == selectedPost ? Color(100, 149, 237) : Color(180, 180, 180));
         window.draw(card);
 
@@ -623,9 +622,9 @@ string buildMemoriesContent(AppBackend& b)
     delete[] mem; return o.str();
 }
 
-// =====================================================
-// LIKED LIST  — takes a specific post ID
-// =====================================================
+
+// LIKED LIST( takes a specific post ID)
+
 
 string buildLikedListContent(AppBackend& b, const string& postId)
 {
@@ -721,9 +720,11 @@ void SocialNetworkingApp::drawViewPageScreen()
     }
 }
 
-// =====================================================
-// LIKED LIST SCREEN — two-step: enter post ID → show
-// =====================================================
+
+// LIKED LIST SCREEN 
+// two-step:
+// enter post ID then show
+
 
 void SocialNetworkingApp::drawLikedListScreen()
 {
@@ -807,7 +808,7 @@ void SocialNetworkingApp::drawPostCard()
         if (p) posterName = p->getTitle();
     }
 
-    if (!post) return; // ⭐ IMPORTANT SAFETY CHECK
+    if (!post) return; 
 
     string headerLine = posterName;
 
@@ -932,7 +933,7 @@ void SocialNetworkingApp::handleEvents()
                 commentInput.clear(); typingInInput = true;
             }
 
-            // ---- FIXED: reset state and enable typing ----
+            
             if (viewLikedListBtn.isClicked(mp))
             {
                 currentScreen = LIKED_LIST;
@@ -1130,9 +1131,8 @@ void SocialNetworkingApp::handleEvents()
                     }
                 }
 
-                // =====================================================
-                // LIKED LIST — Enter key handler
-                // =====================================================
+                // LIKED LIST 
+                
                 else if (currentScreen == LIKED_LIST && likedListStep == 0)
                 {
                     if (commentInput.empty() || isBlank(commentInput))
@@ -1201,7 +1201,7 @@ void SocialNetworkingApp::drawUI()
     case LIKED_PAGES: drawGenericScreen("My Liked Pages", buildLikedPagesContent(backend)); break;
     case PAGES:       drawViewPageScreen();                                       break;
 
-        // ---- FIXED: now calls drawLikedListScreen() ----
+       
     case LIKED_LIST:  drawLikedListScreen();                                      break;
 
     case SET_USER:
