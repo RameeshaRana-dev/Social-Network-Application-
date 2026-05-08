@@ -1,12 +1,12 @@
 ﻿#include "Activity.h"
-#include "SFMLUI.h"
+#include "SocialNetworkingApp.h"
 #include <iostream>
 #include <sstream>
 using namespace std;
 
 // DATE VALIDATION
 
-bool SFMLUI::isValidDate(int d, int m, int y)
+bool SocialNetworkingApp::isValidDate(int d, int m, int y)
 {
     if (y < 1900 || y > 2100) return false;
     if (m < 1 || m > 12)   return false;
@@ -22,7 +22,7 @@ bool SFMLUI::isValidDate(int d, int m, int y)
 
 // CONSTRUCTOR
 
-SFMLUI::SFMLUI()
+SocialNetworkingApp::SocialNetworkingApp()
     : window(VideoMode(1400, 900), "Social Networking App")
 {
     backend.loadAllData();
@@ -33,13 +33,6 @@ SFMLUI::SFMLUI()
 
     if (!font.loadFromFile("segoeuib.ttf"))
         cout << "Font not loaded!\n";
-
-    likeTexture.loadFromFile("like.png");
-    commentTexture.loadFromFile("comment.png");
-    likeIcon.setTexture(likeTexture);
-    commentIcon.setTexture(commentTexture);
-    likeIcon.setScale(0.05f, 0.05f);
-    commentIcon.setScale(0.05f, 0.05f);
 
     darkMode = false;
     bgColor = Color::White;
@@ -58,6 +51,10 @@ SFMLUI::SFMLUI()
     // share memory state
     shareStep = 0;
     sharePostId = "";
+
+    // liked list state
+    likedListStep = 0;
+    likedListPostId = "";
 
     // view page state
     viewPageStep = 0;
@@ -78,7 +75,7 @@ SFMLUI::SFMLUI()
     setupButton(exitBtn, "Exit", 20, 726, Color(220, 20, 60), Color::White);
     setupButton(darkBtn, "Switch Theme", 20, 784, Color(255, 140, 0), Color::White);
 
-    // POST ACTION BUTTONS (for POST_VIEW screen)
+    // POST ACTION BUTTONS
     setupButton(likeActionBtn, "Like", 320, 650, Color(100, 149, 237), Color::White);
     setupButton(commentActionBtn, "Comment", 480, 650, Color(34, 139, 34), Color::White);
     setupButton(backBtn, "Back to Feed", 640, 650, Color(220, 20, 60), Color::White);
@@ -97,7 +94,7 @@ SFMLUI::SFMLUI()
 
 // BUTTON SETUP
 
-void SFMLUI::setupButton(Button& btn, string title,
+void SocialNetworkingApp::setupButton(Button& btn, string title,
     float x, float y, Color bg, Color txtColor)
 {
     btn.box.setPosition(x, y);
@@ -112,18 +109,18 @@ void SFMLUI::setupButton(Button& btn, string title,
 
 // DARK MODE
 
-void SFMLUI::toggleDarkMode()
+void SocialNetworkingApp::toggleDarkMode()
 {
     darkMode = !darkMode;
     if (darkMode)
     {
         bgColor = Color(30, 30, 30); cardColor = Color(50, 50, 50);
-        textColor = Color::White;  sidebarColor = Color(40, 40, 40);
+        textColor = Color::White;    sidebarColor = Color(40, 40, 40);
     }
     else
     {
-        bgColor = Color::White;    cardColor = Color(240, 240, 240);
-        textColor = Color::Black;  sidebarColor = Color(220, 220, 220);
+        bgColor = Color::White;      cardColor = Color(240, 240, 240);
+        textColor = Color::Black;    sidebarColor = Color(220, 220, 220);
     }
 }
 
@@ -133,20 +130,16 @@ bool isBlank(const string& s)
 {
     for (char c : s)
         if (c != ' ' && c != '\t')
-        {
             return false;
-        }
     return true;
 }
 
 // ERROR POPUP
 
-void SFMLUI::drawErrorPopup()
+void SocialNetworkingApp::drawErrorPopup()
 {
-    if (!showErrorPopup)
-    {
-        return;
-    }
+    if (!showErrorPopup) return;
+
     RectangleShape overlay(Vector2f(1400, 900));
     overlay.setFillColor(Color(0, 0, 0, 160));
     window.draw(overlay);
@@ -187,10 +180,9 @@ void SFMLUI::drawErrorPopup()
     window.draw(okTxt);
 }
 
-// ======================
 // LIKE HANDLER
-// ======================
-void SFMLUI::handleLike()
+
+void SocialNetworkingApp::handleLike()
 {
     int count = backend.getPostCount();
     if (count == 0 || selectedPost >= count) return;
@@ -212,10 +204,9 @@ void SFMLUI::handleLike()
     statusMessage = "Post liked successfully!";
 }
 
-// ======================
 // COMMENT HANDLER
-// ======================
-void SFMLUI::handleComment()
+
+void SocialNetworkingApp::handleComment()
 {
     int count = backend.getPostCount();
     if (count == 0 || selectedPost >= count) return;
@@ -227,17 +218,14 @@ void SFMLUI::handleComment()
         return;
     }
 
-    backend.addComment(
-        backend.getPosts()[selectedPost]->getID(),
-        commentInput);
+    backend.addComment(backend.getPosts()[selectedPost]->getID(), commentInput);
     statusMessage = "Comment added!";
     commentInput.clear();
 }
 
-// ======================
 // STATUS BAR
-// ======================
-void SFMLUI::drawStatusMessage()
+
+void SocialNetworkingApp::drawStatusMessage()
 {
     if (statusMessage.empty()) return;
 
@@ -252,10 +240,9 @@ void SFMLUI::drawStatusMessage()
     msg.setPosition(304, 862); window.draw(msg);
 }
 
-// ======================
 // SIDEBAR
-// ======================
-void SFMLUI::drawSidebar()
+
+void SocialNetworkingApp::drawSidebar()
 {
     RectangleShape sidebar(Vector2f(268, 900));
     sidebar.setFillColor(sidebarColor);
@@ -267,7 +254,6 @@ void SFMLUI::drawSidebar()
     title.setPosition(18, 10);
     title.setFillColor(textColor);
     title.setStyle(Text::Bold);
-
     window.draw(title);
 
     window.draw(homeBtn.box);          window.draw(homeBtn.text);
@@ -286,14 +272,12 @@ void SFMLUI::drawSidebar()
     window.draw(darkBtn.box);          window.draw(darkBtn.text);
 }
 
-// ======================
 // INPUT BOX
-// ======================
-void SFMLUI::drawInputBox()
+
+void SocialNetworkingApp::drawInputBox()
 {
     inputBox.setFillColor(darkMode ? Color(60, 60, 60) : Color::White);
-    inputBox.setOutlineColor(typingInInput
-        ? Color(100, 149, 237) : Color(180, 180, 180));
+    inputBox.setOutlineColor(typingInInput ? Color(100, 149, 237) : Color(180, 180, 180));
 
     string display = commentInput.empty() ? "Click here and type..." : commentInput;
     inputText.setFillColor(commentInput.empty() ? Color(160, 160, 160)
@@ -304,10 +288,9 @@ void SFMLUI::drawInputBox()
     window.draw(inputText);
 }
 
-// ======================
 // HOME FEED
-// ======================
-void SFMLUI::drawHomeFeed()
+
+void SocialNetworkingApp::drawHomeFeed()
 {
     Post** posts = backend.getPosts();
     int count = backend.getPostCount();
@@ -322,20 +305,17 @@ void SFMLUI::drawHomeFeed()
         empty.setFillColor(textColor);
         empty.setPosition(600, 400);
         window.draw(empty);
-
         drawInputBox();
         return;
     }
 
     string* friendIDs = cu->getFriendIDs();
     int friendCount = cu->getFriendCount();
-
     string* pageIDs = cu->getLikedPageIDs();
     int pageCount = cu->getLikedPageCount();
 
     const float cardX = 285.f;
     const float cardWidth = 1080.f;
-
     float currentY = 20.f - scrollOffset;
 
     for (int i = 0; i < count; i++)
@@ -343,153 +323,96 @@ void SFMLUI::drawHomeFeed()
         Post* post = posts[i];
         string sharedBy = post->getSharedById();
 
-        if (post->getPostType() == 3)
-            continue;
-
-        if (post->getLikeCount() == 0)
-            continue;
+        if (post->getPostType() == 3) continue;
+        if (post->getLikeCount() == 0) continue;
 
         bool relevant = false;
-
         for (int j = 0; j < friendCount; j++)
-        {
-            if (sharedBy == friendIDs[j])
-            {
-                relevant = true;
-                break;
-            }
-        }
-
+            if (sharedBy == friendIDs[j]) { relevant = true; break; }
         for (int j = 0; j < pageCount; j++)
-        {
-            if (sharedBy == pageIDs[j])
-            {
-                relevant = true;
-                break;
-            }
-        }
-
-        if (sharedBy == cu->getId())
-            relevant = true;
-
-        if (!relevant)
-            continue;
+            if (sharedBy == pageIDs[j]) { relevant = true; break; }
+        if (sharedBy == cu->getId()) relevant = true;
+        if (!relevant) continue;
 
         string posterName = sharedBy;
-
-        if (sharedBy[0] == 'u')
-        {
+        if (sharedBy[0] == 'u') {
             User* u = backend.findUser(sharedBy);
             if (u) posterName = u->getName();
         }
-        else
-        {
+        else {
             Page* p = backend.findPage(sharedBy);
             if (p) posterName = p->getTitle();
         }
 
-        string headerLine;
+        if (!post) continue;   // 🔥 MUST ADD THIS
 
         Activity* act = dynamic_cast<Activity*>(post);
 
+        string headerLine;
+
         if (act)
         {
-            headerLine =
-                "--- " + posterName +
-                " is " +
-                act->getActivityLabel() +
-                " " +
-                act->getActivityValue();
+            headerLine = "--- " + posterName +
+                " is " + act->getActivityLabel() +
+                " " + act->getActivityValue();
         }
         else
         {
-            headerLine =
-                "--- " + posterName +
-                " shared";
+            headerLine = "--- " + posterName + " shared";
         }
 
         int visibleComments = min(post->getCommentCount(), 3);
         float cardHeight = 170.f + (visibleComments * 38.f);
-
         RectangleShape card(Vector2f(cardWidth, cardHeight));
         card.setPosition(cardX, currentY);
         card.setFillColor(cardColor);
-
         card.setOutlineThickness(i == selectedPost ? 3 : 1);
-        card.setOutlineColor(
-            i == selectedPost
-            ? Color(100, 149, 237)
-            : Color(180, 180, 180)
-        );
-
+        card.setOutlineColor(i == selectedPost ? Color(100, 149, 237) : Color(180, 180, 180));
         window.draw(card);
 
         Text headerTxt;
-        headerTxt.setFont(font);
-        headerTxt.setCharacterSize(21);
-        headerTxt.setStyle(Text::Bold);
-        headerTxt.setFillColor(textColor);
-        headerTxt.setString(headerLine);
-        headerTxt.setPosition(cardX + 15, currentY + 15);
-
+        headerTxt.setFont(font); headerTxt.setCharacterSize(21);
+        headerTxt.setStyle(Text::Bold); headerTxt.setFillColor(textColor);
+        headerTxt.setString(headerLine); headerTxt.setPosition(cardX + 15, currentY + 15);
         window.draw(headerTxt);
 
         string postText = "\"" + post->getText() + "\"";
-
-        if (postText.length() > 130)
-            postText = postText.substr(0, 130) + "...";
+        if (postText.length() > 130) postText = postText.substr(0, 130) + "...";
 
         Text postTxt;
-        postTxt.setFont(font);
-        postTxt.setCharacterSize(20);
-        postTxt.setFillColor(textColor);
-        postTxt.setString(postText);
+        postTxt.setFont(font); postTxt.setCharacterSize(20);
+        postTxt.setFillColor(textColor); postTxt.setString(postText);
         postTxt.setPosition(cardX + 20, currentY + 55);
-
         window.draw(postTxt);
 
         Text dateTxt;
-        dateTxt.setFont(font);
-        dateTxt.setCharacterSize(14);
+        dateTxt.setFont(font); dateTxt.setCharacterSize(14);
         dateTxt.setFillColor(Color(140, 140, 140));
-        dateTxt.setString(
-            to_string(post->getDay()) + "/" +
-            to_string(post->getMonth()) + "/" +
-            to_string(post->getYear())
-        );
+        dateTxt.setString(to_string(post->getDay()) + "/" + to_string(post->getMonth()) + "/" + to_string(post->getYear()));
         dateTxt.setPosition(cardX + 20, currentY + 95);
-
         window.draw(dateTxt);
 
         Text likeTxt;
-        likeTxt.setFont(font);
-        likeTxt.setCharacterSize(16);
+        likeTxt.setFont(font); likeTxt.setCharacterSize(16);
         likeTxt.setFillColor(Color(100, 149, 237));
         likeTxt.setString("Likes: " + to_string(post->getLikeCount()));
         likeTxt.setPosition(cardX + 20, currentY + 120);
-
         window.draw(likeTxt);
 
         float commentY = currentY + 150;
         Comment* cmts = post->getComments();
-
         for (int c = 0; c < post->getCommentCount() && c < 3; c++)
         {
             string authorID = cmts[c].getAuthorID();
             string authorName = authorID;
-
             User* au = backend.findUser(authorID);
             if (au) authorName = au->getName();
 
-            string cmt = authorName + " wrote: \"" + cmts[c].getText() + "\"";
-
             Text cmtTxt;
-            cmtTxt.setFont(font);
-            cmtTxt.setCharacterSize(16);
+            cmtTxt.setFont(font); cmtTxt.setCharacterSize(16);
             cmtTxt.setFillColor(Color(80, 80, 80));
-            cmtTxt.setString(cmt);
+            cmtTxt.setString(authorName + " wrote: \"" + cmts[c].getText() + "\"");
             cmtTxt.setPosition(cardX + 25, commentY);
-
             window.draw(cmtTxt);
             commentY += 34.f;
         }
@@ -499,10 +422,9 @@ void SFMLUI::drawHomeFeed()
     drawStatusMessage();
 }
 
-// ======================
 // GENERIC SCREEN
-// ======================
-void SFMLUI::drawGenericScreen(const string& title, const string& content)
+
+void SocialNetworkingApp::drawGenericScreen(const string& title, const string& content)
 {
     RectangleShape card(Vector2f(1110, 870));
     card.setPosition(278, 10); card.setFillColor(cardColor);
@@ -520,9 +442,8 @@ void SFMLUI::drawGenericScreen(const string& title, const string& content)
     window.draw(body);
 }
 
-// ======================
-// BUILD: PROFILE
-// ======================
+// PROFILE
+
 string buildProfileContent(AppBackend& b)
 {
     User* u = b.getCurrentUser();
@@ -533,7 +454,7 @@ string buildProfileContent(AppBackend& b)
     Post** mine = new Post * [count]; int mc = 0;
     for (int i = 0; i < count; i++)
         if (posts[i]->getSharedById() == u->getId()) mine[mc++] = posts[i];
-    if (mc == 0) { o << "No posts yet."; delete[]mine; return o.str(); }
+    if (mc == 0) { o << "No posts yet."; delete[] mine; return o.str(); }
     for (int i = 0; i < mc - 1; i++) for (int j = 0; j < mc - i - 1; j++)
     {
         Post* a = mine[j], * bx = mine[j + 1]; bool sw = false;
@@ -552,70 +473,44 @@ string buildProfileContent(AppBackend& b)
             << "\n  Likes: " << mine[i]->getLikeCount()
             << "   Comments: " << mine[i]->getCommentCount() << "\n\n";
     }
-    delete[]mine; return o.str();
+    delete[] mine; return o.str();
 }
 
-// ======================
-// BUILD: TIMELINE - FIXED
-// ======================
+// TIMELINE
+
 string buildTimelineContent(AppBackend& b)
 {
     User* u = b.getCurrentUser();
     if (!u) return "No user set.";
-
-    Post** posts = b.getPosts();
-    int count = b.getPostCount();
-
+    Post** posts = b.getPosts(); int count = b.getPostCount();
     ostringstream o;
     o << u->getName() << " - Timeline\n\n";
-
     for (int i = 0; i < count; i++)
     {
         Post* p = posts[i];
-
         if (!p) continue;
-
         bool isMemory = (p->getPostType() == 3);
-
         if (isMemory)
-        {
-            o << "~~~ " << u->getName()
-                << " shared a memory ~~~ ("
-                << p->getDay() << "/"
-                << p->getMonth() << "/"
-                << p->getYear() << ")\n";
-        }
-
+            o << "~~~ " << u->getName() << " shared a memory ~~~ ("
+            << p->getDay() << "/" << p->getMonth() << "/" << p->getYear() << ")\n";
         Activity* act = dynamic_cast<Activity*>(p);
-
-        if (act)
-        {
+        if (act) {
             User* poster = b.findUser(p->getSharedById());
             string name = poster ? poster->getName() : p->getSharedById();
-
-            o << "--- " << name
-                << " is " << act->getActivityLabel()
-                << " " << act->getActivityValue() << "\n";
+            o << "--- " << name << " is " << act->getActivityLabel() << " " << act->getActivityValue() << "\n";
         }
-        else
-        {
+        else {
             o << "--- " << p->getSharedById() << " shared\n";
         }
-
         o << "\"" << p->getText() << "\"\n";
-
-        if (p->getLikeCount() > 0)
-            o << "(" << p->getLikeCount() << " Likes)\n";
-
+        if (p->getLikeCount() > 0) o << "(" << p->getLikeCount() << " Likes)\n";
         o << "\n";
     }
-
     return o.str();
 }
 
-// ======================
-// BUILD: FRIENDS
-// ======================
+// FRIENDS
+
 string buildFriendContent(AppBackend& b)
 {
     User* u = b.getCurrentUser();
@@ -631,9 +526,8 @@ string buildFriendContent(AppBackend& b)
     return o.str();
 }
 
-// ======================
-// BUILD: LIKED PAGES LIST
-// ======================
+// LIKED PAGES LIST
+
 string buildLikedPagesContent(AppBackend& b)
 {
     User* u = b.getCurrentUser();
@@ -649,24 +543,20 @@ string buildLikedPagesContent(AppBackend& b)
     return o.str();
 }
 
-// ======================
-// BUILD: VIEW ONE PAGE by ID
-// ======================
+// VIEW ONE PAGE by ID
+
 string buildOnePageContent(AppBackend& b, const string& pageId)
 {
     Page* page = b.findPage(pageId);
     if (!page) return "Page not found";
-
-    Post** posts = b.getPosts();
-    int count = b.getPostCount();
-
+    Post** posts = b.getPosts(); int count = b.getPostCount();
     ostringstream o;
-
     o << page->getTitle() << "\n\n";
-
     for (int i = 0; i < count; i++)
     {
         Post* p = posts[i];
+
+        if (!p) continue;  
 
         if (p->getSharedById() != page->getID())
             continue;
@@ -674,19 +564,17 @@ string buildOnePageContent(AppBackend& b, const string& pageId)
         Activity* act = dynamic_cast<Activity*>(p);
 
         if (act)
-        {
             o << "--- " << page->getTitle()
-                << " is " << act->getActivityLabel()
-                << " " << act->getActivityValue() << ".\n";
-        }
+            << " is " << act->getActivityLabel()
+            << " " << act->getActivityValue() << ".\n";
         else
-        {
             o << "--- " << page->getTitle() << " post\n";
-        }
 
         o << "\"" << p->getText() << "\"\n";
 
         Comment* cm = p->getComments();
+
+        if (!cm) continue;   
 
         for (int c = 0; c < p->getCommentCount(); c++)
         {
@@ -699,125 +587,88 @@ string buildOnePageContent(AppBackend& b, const string& pageId)
 
         o << "\n";
     }
-
     return o.str();
 }
 
-// ======================
-// BUILD: MEMORIES
-// ======================
+// MEMORIES
+
 string buildMemoriesContent(AppBackend& b)
 {
     User* u = b.getCurrentUser();
     if (!u) return "No user set.";
     Post** posts = b.getPosts(); int count = b.getPostCount();
     int sd = b.getSystemDay(), sm = b.getSystemMonth(), sy = b.getSystemYear();
-
     ostringstream o;
     o << "We hope you enjoy looking back and sharing your\n"
         << "memories on Facebook, from the most recent to\n"
-        << "those long ago.\n\n"
-        << "On This Day\n\n";
-
+        << "those long ago.\n\nOn This Day\n\n";
     Post** mem = new Post * [count]; int mc = 0;
     for (int i = 0; i < count; i++) {
         if (posts[i]->getSharedById() != u->getId()) continue;
-        if (posts[i]->getDay() == sd && posts[i]->getMonth() == sm
-            && posts[i]->getYear() < sy)
+        if (posts[i]->getDay() == sd && posts[i]->getMonth() == sm && posts[i]->getYear() < sy)
             mem[mc++] = posts[i];
     }
-
     if (mc == 0) {
-        o << "No memories for today.\n\n"
-            << "Note: Memories show your original posts made\n"
-            << "on this day in past years only.";
-        delete[]mem; return o.str();
+        o << "No memories for today.\n\nNote: Memories show your original posts made\non this day in past years only.";
+        delete[] mem; return o.str();
     }
-
     for (int i = 0; i < mc - 1; i++) for (int j = 0; j < mc - i - 1; j++)
-        if (mem[j]->getYear() < mem[j + 1]->getYear())
-        {
-            Post* tmp = mem[j]; mem[j] = mem[j + 1]; mem[j + 1] = tmp;
-        }
-
-    for (int i = 0; i < mc; i++)
-    {
+        if (mem[j]->getYear() < mem[j + 1]->getYear()) { Post* tmp = mem[j]; mem[j] = mem[j + 1]; mem[j + 1] = tmp; }
+    for (int i = 0; i < mc; i++) {
         int ago = sy - mem[i]->getYear();
         o << ago << " Year" << (ago > 1 ? "s" : "") << " Ago  ("
-            << mem[i]->getDay() << "/" << mem[i]->getMonth() << "/" << mem[i]->getYear() << ")\n";
-        o << mem[i]->getText() << "\n\n";
+            << mem[i]->getDay() << "/" << mem[i]->getMonth() << "/" << mem[i]->getYear() << ")\n"
+            << mem[i]->getText() << "\n\n";
     }
-
-    delete[]mem; return o.str();
+    delete[] mem; return o.str();
 }
 
-// ======================
-// BUILD: LIKED LIST
-// ======================
-string buildLikedListContent(AppBackend& b)
-{
-    User* u = b.getCurrentUser();
-    if (!u) return "No user set.";
+// =====================================================
+// LIKED LIST  — takes a specific post ID
+// =====================================================
 
-    Post** posts = b.getPosts();
-    int count = b.getPostCount();
+string buildLikedListContent(AppBackend& b, const string& postId)
+{
+    // Check post exists
+    Post* post = b.findPost(postId);
+    if (!post)
+        return "Error: Post '" + postId + "' does not exist.";
 
     ostringstream o;
-    o << "Like counts for posts by " << u->getName() << ":\n\n";
+    o << "Post Liked By:\n\n";
 
-    bool any = false;
-
-    for (int i = 0; i < count; i++)
+    if (post->getLikeCount() == 0)
     {
-        if (posts[i]->getSharedById() != u->getId())
-            continue;
-
-        if (posts[i]->getLikeCount() == 0)
-            continue;
-
-        any = true;
-
-        string txt = posts[i]->getText();
-        if (txt.length() > 60)
-            txt = txt.substr(0, 60) + "...";
-
-        o << "Post " << posts[i]->getID() << ": \"" << txt << "\"\n"
-            << "  Total likes: " << posts[i]->getLikeCount() << "\n";
-
-        string* lb = posts[i]->getLikedBy();
-
-        for (int j = 0; j < posts[i]->getLikeCount(); j++)
-        {
-            string lid = lb[j];
-            string name = lid;
-
-            if (!lid.empty() && lid[0] == 'u')
-            {
-                User* fu = b.findUser(lid);
-                if (fu) name = fu->getName();
-            }
-            else
-            {
-                Page* fp = b.findPage(lid);
-                if (fp) name = fp->getTitle();
-            }
-
-            o << "    * " << lid << "  -  " << name << "\n";
-        }
-
-        o << "\n";
+        o << "No one has liked this post yet.";
+        return o.str();
     }
 
-    if (!any)
-        o << "No posts found for this user.";
+    string* lb = post->getLikedBy();
+    for (int j = 0; j < post->getLikeCount(); j++)
+    {
+        string lid = lb[j];
+        string name = lid;
+
+        if (!lid.empty() && lid[0] == 'u')
+        {
+            User* fu = b.findUser(lid);
+            if (fu) name = fu->getName();
+        }
+        else
+        {
+            Page* fp = b.findPage(lid);
+            if (fp) name = fp->getTitle();
+        }
+
+        o << lid << "  -  " << name << "\n";
+    }
 
     return o.str();
 }
 
-// ======================
-// SHARE MEMORY SCREEN - FIXED
-// ======================
-void SFMLUI::drawShareMemoryScreen()
+// SHARE MEMORY SCREEN
+
+void SocialNetworkingApp::drawShareMemoryScreen()
 {
     RectangleShape card(Vector2f(1110, 870));
     card.setPosition(278, 10); card.setFillColor(cardColor);
@@ -833,22 +684,14 @@ void SFMLUI::drawShareMemoryScreen()
     {
         Text instr; instr.setFont(font); instr.setCharacterSize(20);
         instr.setFillColor(textColor);
-        instr.setString(
-            "Step 1 of 2\n\n"
-            "Type the Post ID of the memory you want to share,\n"
-            "then press Enter.\n\n"
-            "Example:  p1\n\n");
+        instr.setString("Step 1 of 2\n\nType the Post ID of the memory you want to share,\nthen press Enter.\n\nExample:  p1\n\n");
         instr.setPosition(290, 60); window.draw(instr);
     }
-    else // shareStep==1
+    else
     {
         Text instr; instr.setFont(font); instr.setCharacterSize(20);
         instr.setFillColor(textColor);
-        instr.setString(
-            "Step 2 of 2\n\n"
-            "Type a caption for sharing this memory,\n"
-            "then press Enter.\n\n"
-            "Selected Post ID: " + sharePostId + "\n\n");
+        instr.setString("Step 2 of 2\n\nType a caption for sharing this memory,\nthen press Enter.\n\nSelected Post ID: " + sharePostId + "\n\n");
         instr.setPosition(290, 60); window.draw(instr);
     }
 
@@ -856,10 +699,9 @@ void SFMLUI::drawShareMemoryScreen()
     drawStatusMessage();
 }
 
-// ======================
 // VIEW PAGE SCREEN
-// ======================
-void SFMLUI::drawViewPageScreen()
+
+void SocialNetworkingApp::drawViewPageScreen()
 {
     if (viewPageStep == 0)
     {
@@ -871,8 +713,7 @@ void SFMLUI::drawViewPageScreen()
     }
     else
     {
-        drawGenericScreen("Page: " + viewPageId,
-            buildOnePageContent(backend, viewPageId));
+        drawGenericScreen("Page: " + viewPageId, buildOnePageContent(backend, viewPageId));
         Text back; back.setFont(font); back.setCharacterSize(16);
         back.setFillColor(Color(160, 160, 160));
         back.setString("Press Backspace or click Home to go back");
@@ -880,10 +721,58 @@ void SFMLUI::drawViewPageScreen()
     }
 }
 
-// ======================
-// POST CARD VIEW - FIXED
-// ======================
-void SFMLUI::drawPostCard()
+// =====================================================
+// LIKED LIST SCREEN — two-step: enter post ID → show
+// =====================================================
+
+void SocialNetworkingApp::drawLikedListScreen()
+{
+    RectangleShape card(Vector2f(1110, 870));
+    card.setPosition(278, 10); card.setFillColor(cardColor);
+    card.setOutlineThickness(1); card.setOutlineColor(Color(180, 180, 180));
+    window.draw(card);
+
+    if (likedListStep == 0)
+    {
+        Text heading; heading.setFont(font); heading.setCharacterSize(26);
+        heading.setFillColor(Color(100, 149, 237)); heading.setStyle(Text::Bold);
+        heading.setString("View Liked List"); heading.setPosition(290, 18);
+        window.draw(heading);
+
+        Text instr; instr.setFont(font); instr.setCharacterSize(20);
+        instr.setFillColor(textColor);
+        instr.setString(
+            "Type a Post ID to see who liked it, then press Enter.\n\n"
+            "Example:  p5\n\n"
+            "Tip: Check your Profile screen for your post IDs.");
+        instr.setPosition(290, 60); window.draw(instr);
+
+        drawInputBox();
+        drawStatusMessage();
+    }
+    else
+    {
+        // Show the liked list for the chosen post
+        Text heading; heading.setFont(font); heading.setCharacterSize(26);
+        heading.setFillColor(Color(100, 149, 237)); heading.setStyle(Text::Bold);
+        heading.setString("Liked List: Post " + likedListPostId);
+        heading.setPosition(290, 18); window.draw(heading);
+
+        Text body; body.setFont(font); body.setCharacterSize(18);
+        body.setFillColor(textColor);
+        body.setString(buildLikedListContent(backend, likedListPostId));
+        body.setPosition(290, 60); window.draw(body);
+
+        Text back; back.setFont(font); back.setCharacterSize(16);
+        back.setFillColor(Color(160, 160, 160));
+        back.setString("Press Backspace to search another post");
+        back.setPosition(290, 840); window.draw(back);
+    }
+}
+
+// POST CARD VIEW
+
+void SocialNetworkingApp::drawPostCard()
 {
     Post** posts = backend.getPosts();
     int count = backend.getPostCount();
@@ -894,36 +783,41 @@ void SFMLUI::drawPostCard()
         card.setPosition(278, 10); card.setFillColor(cardColor);
         card.setOutlineThickness(1); card.setOutlineColor(Color(180, 180, 180));
         window.draw(card);
-
-        Text empty;
-        empty.setFont(font);
+        Text empty; empty.setFont(font);
         empty.setString("No post selected or invalid post.");
-        empty.setCharacterSize(24);
-        empty.setFillColor(textColor);
-        empty.setPosition(600, 400);
-        window.draw(empty);
+        empty.setCharacterSize(24); empty.setFillColor(textColor);
+        empty.setPosition(600, 400); window.draw(empty);
         return;
     }
 
     Post* post = posts[selectedPost];
 
     RectangleShape card(Vector2f(1060, 580));
-    card.setPosition(295, 30);
-    card.setFillColor(cardColor);
-    card.setOutlineThickness(2);
-    card.setOutlineColor(Color(100, 149, 237));
+    card.setPosition(295, 30); card.setFillColor(cardColor);
+    card.setOutlineThickness(2); card.setOutlineColor(Color(100, 149, 237));
     window.draw(card);
 
     string posterName = post->getSharedById();
-    if (posterName[0] == 'u')
-    {
+    if (!posterName.empty() && posterName[0] == 'u') {
         User* u = backend.findUser(posterName);
         if (u) posterName = u->getName();
     }
-    else
-    {
+    else {
         Page* p = backend.findPage(posterName);
         if (p) posterName = p->getTitle();
+    }
+
+    if (!post) return; // ⭐ IMPORTANT SAFETY CHECK
+
+    string headerLine = posterName;
+
+    Activity* act = dynamic_cast<Activity*>(post);
+
+    if (act)
+    {
+        headerLine = posterName + " is " +
+            act->getActivityLabel() + " " +
+            act->getActivityValue();
     }
 
     Text author;
@@ -931,45 +825,41 @@ void SFMLUI::drawPostCard()
     author.setCharacterSize(24);
     author.setStyle(Text::Bold);
     author.setFillColor(textColor);
-    author.setString(posterName);
+    author.setString(headerLine);
     author.setPosition(315, 45);
     window.draw(author);
 
+    // SAFE DATE ACCESS
     Text date;
     date.setFont(font);
     date.setCharacterSize(16);
     date.setFillColor(Color(140, 140, 140));
-    date.setString(
-        to_string(post->getDay()) + "/" +
-        to_string(post->getMonth()) + "/" +
-        to_string(post->getYear())
-    );
+
+    if (post)
+    {
+        date.setString(
+            to_string(post->getDay()) + "/" +
+            to_string(post->getMonth()) + "/" +
+            to_string(post->getYear())
+        );
+    }
+
     date.setPosition(315, 75);
     window.draw(date);
 
-    Text content;
-    content.setFont(font);
-    content.setCharacterSize(20);
+    Text content; content.setFont(font); content.setCharacterSize(20);
     content.setFillColor(textColor);
     content.setString("\"" + post->getText() + "\"");
-    content.setPosition(315, 110);
-    window.draw(content);
+    content.setPosition(315, 110); window.draw(content);
 
-    Text likes;
-    likes.setFont(font);
-    likes.setCharacterSize(18);
+    Text likes; likes.setFont(font); likes.setCharacterSize(18);
     likes.setFillColor(Color(100, 149, 237));
     likes.setString("Likes: " + to_string(post->getLikeCount()));
-    likes.setPosition(315, 180);
-    window.draw(likes);
+    likes.setPosition(315, 180); window.draw(likes);
 
-    Text commentsTitle;
-    commentsTitle.setFont(font);
-    commentsTitle.setCharacterSize(20);
-    commentsTitle.setStyle(Text::Bold);
-    commentsTitle.setFillColor(textColor);
-    commentsTitle.setString("Comments:");
-    commentsTitle.setPosition(315, 220);
+    Text commentsTitle; commentsTitle.setFont(font); commentsTitle.setCharacterSize(20);
+    commentsTitle.setStyle(Text::Bold); commentsTitle.setFillColor(textColor);
+    commentsTitle.setString("Comments:"); commentsTitle.setPosition(315, 220);
     window.draw(commentsTitle);
 
     float yPos = 255;
@@ -978,33 +868,24 @@ void SFMLUI::drawPostCard()
     {
         string authorID = cmts[i].getAuthorID();
         string authorName = authorID;
-
         User* u = backend.findUser(authorID);
         if (u) authorName = u->getName();
 
-        Text cmt;
-        cmt.setFont(font);
-        cmt.setCharacterSize(17);
+        Text cmt; cmt.setFont(font); cmt.setCharacterSize(17);
         cmt.setFillColor(Color(80, 80, 80));
         cmt.setString(authorName + ": \"" + cmts[i].getText() + "\"");
-        cmt.setPosition(325, yPos);
-        window.draw(cmt);
-
+        cmt.setPosition(325, yPos); window.draw(cmt);
         yPos += 30;
     }
 
-    window.draw(likeActionBtn.box);
-    window.draw(likeActionBtn.text);
-    window.draw(commentActionBtn.box);
-    window.draw(commentActionBtn.text);
-    window.draw(backBtn.box);
-    window.draw(backBtn.text);
+    window.draw(likeActionBtn.box);    window.draw(likeActionBtn.text);
+    window.draw(commentActionBtn.box); window.draw(commentActionBtn.text);
+    window.draw(backBtn.box);          window.draw(backBtn.text);
 }
 
-// ======================
-// HANDLE EVENTS - FIXED
-// ======================
-void SFMLUI::handleEvents()
+// HANDLE EVENTS
+
+void SocialNetworkingApp::handleEvents()
 {
     Event e;
     while (window.pollEvent(e))
@@ -1013,63 +894,61 @@ void SFMLUI::handleEvents()
 
         if (showErrorPopup)
         {
-            if (e.type == Event::MouseButtonPressed
-                || e.type == Event::KeyPressed)
+            if (e.type == Event::MouseButtonPressed || e.type == Event::KeyPressed)
             {
-                showErrorPopup = false;
-                return;
+                showErrorPopup = false; return;
             }
             continue;
         }
 
-        if (e.type == Event::MouseButtonPressed
-            && e.mouseButton.button == Mouse::Left)
+        if (e.type == Event::MouseButtonPressed && e.mouseButton.button == Mouse::Left)
         {
             Vector2f mp = window.mapPixelToCoords(Mouse::getPosition(window));
             statusMessage = "";
 
-            if (darkBtn.isClicked(mp))
-                toggleDarkMode();
-            if (exitBtn.isClicked(mp))
-                window.close();
+            if (darkBtn.isClicked(mp))        toggleDarkMode();
+            if (exitBtn.isClicked(mp))         window.close();
             if (homeBtn.isClicked(mp))
             {
                 currentScreen = HOME; scrollOffset = 0;
                 shareStep = 0; viewPageStep = 0;
+                likedListStep = 0; likedListPostId = "";
             }
-            if (profileBtn.isClicked(mp))
-                currentScreen = PROFILE;
-            if (timelineBtn.isClicked(mp))
-                currentScreen = TIMELINE;
-            if (memoryBtn.isClicked(mp))
-                currentScreen = MEMORIES;
+            if (profileBtn.isClicked(mp))      currentScreen = PROFILE;
+            if (timelineBtn.isClicked(mp))     currentScreen = TIMELINE;
+            if (memoryBtn.isClicked(mp))       currentScreen = MEMORIES;
             if (shareMemoryBtn.isClicked(mp))
             {
                 currentScreen = SHARE_MEMORY;
                 shareStep = 0; sharePostId = "";
                 commentInput.clear(); typingInInput = true;
             }
-            if (friendsBtn.isClicked(mp))
-                currentScreen = FRIENDS;
-            if (pagesBtn.isClicked(mp))
-                currentScreen = LIKED_PAGES;
+            if (friendsBtn.isClicked(mp))      currentScreen = FRIENDS;
+            if (pagesBtn.isClicked(mp))        currentScreen = LIKED_PAGES;
             if (likedPagesBtn.isClicked(mp))
             {
                 currentScreen = PAGES;
                 viewPageStep = 0; viewPageId = "";
                 commentInput.clear(); typingInInput = true;
             }
+
+            // ---- FIXED: reset state and enable typing ----
             if (viewLikedListBtn.isClicked(mp))
+            {
                 currentScreen = LIKED_LIST;
+                likedListStep = 0;
+                likedListPostId = "";
+                commentInput.clear();
+                typingInInput = true;
+            }
+
             if (setUserBtn.isClicked(mp))
             {
-                currentScreen = SET_USER;
-                commentInput.clear(); typingInInput = true;
+                currentScreen = SET_USER; commentInput.clear(); typingInInput = true;
             }
             if (setDateBtn.isClicked(mp))
             {
-                currentScreen = SET_DATE;
-                commentInput.clear(); typingInInput = true;
+                currentScreen = SET_DATE; commentInput.clear(); typingInInput = true;
             }
             if (viewPostBtn.isClicked(mp))
                 currentScreen = POST_VIEW;
@@ -1090,9 +969,7 @@ void SFMLUI::handleEvents()
                 int cnt = backend.getPostCount();
 
                 User* cu2 = backend.getCurrentUser();
-                const float cardX = 285.f;
-                if (!cu2)
-                    return;
+                if (!cu2) return;
 
                 string* fids = cu2->getFriendIDs();
                 int fc2 = cu2->getFriendCount();
@@ -1101,11 +978,12 @@ void SFMLUI::handleEvents()
                 int pc2 = cu2->getLikedPageCount();
 
                 float drawY2 = 20.f - scrollOffset;
-                int cardIndex = 0;
 
                 for (int i = 0; i < cnt; i++)
                 {
                     Post* p = posts[i];
+                    if (!p) continue;
+
                     string sb = p->getSharedById();
 
                     if (p->getPostType() == 3) continue;
@@ -1121,12 +999,15 @@ void SFMLUI::handleEvents()
 
                     if (sb == cu2->getId()) rel = true;
 
-                    if (!rel) continue;
+                    if (!rel)
+                    {
+                        continue;
+                    }
 
                     int vc = min(p->getCommentCount(), 3);
                     float cardH = 170.f + vc * 38.f;
 
-                    FloatRect cardRect(cardX, drawY2, 1080.f, cardH);
+                    FloatRect cardRect(285.f, drawY2, 1080.f, cardH);
 
                     if (cardRect.contains(mp))
                     {
@@ -1138,7 +1019,6 @@ void SFMLUI::handleEvents()
                     }
 
                     drawY2 += cardH + 25.f;
-                    cardIndex++;
                 }
             }
 
@@ -1148,15 +1028,14 @@ void SFMLUI::handleEvents()
         if (e.type == Event::MouseWheelScrolled && currentScreen == HOME)
         {
             scrollOffset -= e.mouseWheelScroll.delta * 30.f;
-            if (scrollOffset < 0)scrollOffset = 0;
+            if (scrollOffset < 0) scrollOffset = 0;
         }
 
         if (e.type == Event::TextEntered && typingInInput)
         {
             if (e.text.unicode == '\b')
             {
-                if (!commentInput.empty())
-                    commentInput.pop_back();
+                if (!commentInput.empty()) commentInput.pop_back();
             }
             else if (e.text.unicode == '\r' || e.text.unicode == '\n')
             {
@@ -1167,8 +1046,7 @@ void SFMLUI::handleEvents()
                 {
                     backend.setCurrentUser(commentInput);
                     statusMessage = "User set to: " + commentInput;
-                    commentInput.clear();
-                    currentScreen = HOME;
+                    commentInput.clear(); currentScreen = HOME;
                 }
 
                 else if (currentScreen == SET_DATE)
@@ -1184,11 +1062,7 @@ void SFMLUI::handleEvents()
                         else
                         {
                             backend.setSystemDate(d, m, y);
-                            statusMessage =
-                                "System Date set to: " +
-                                to_string(d) + "/" +
-                                to_string(m) + "/" +
-                                to_string(y);
+                            statusMessage = "System Date set to: " + to_string(d) + "/" + to_string(m) + "/" + to_string(y);
                             currentScreen = HOME;
                         }
                     }
@@ -1216,8 +1090,7 @@ void SFMLUI::handleEvents()
                             }
                             else
                             {
-                                sharePostId = commentInput; shareStep = 1;
-                                commentInput.clear();
+                                sharePostId = commentInput; shareStep = 1; commentInput.clear();
                             }
                         }
                     }
@@ -1232,31 +1105,55 @@ void SFMLUI::handleEvents()
                             backend.shareMemory(sharePostId, commentInput);
                             statusMessage = "Memory shared successfully!";
                             shareStep = 0; sharePostId = "";
-                            commentInput.clear();
-                            currentScreen = MEMORIES;
+                            commentInput.clear(); currentScreen = MEMORIES;
                         }
                     }
                 }
 
-                else if (currentScreen == PAGES)
+                else if (currentScreen == PAGES && viewPageStep == 0)
                 {
-                    if (viewPageStep == 0)
+                    if (commentInput.empty() || isBlank(commentInput))
                     {
-                        if (commentInput.empty() || isBlank(commentInput))
+                        popupMessage = "Please enter a Page ID."; showErrorPopup = true;
+                    }
+                    else
+                    {
+                        Page* pg = backend.findPage(commentInput);
+                        if (!pg)
                         {
-                            popupMessage = "Please enter a Page ID."; showErrorPopup = true;
+                            popupMessage = "Page '" + commentInput + "' not found!"; showErrorPopup = true;
                         }
                         else
                         {
-                            Page* pg = backend.findPage(commentInput);
-                            if (!pg)
-                            {
-                                popupMessage = "Page '" + commentInput + "' not found!"; showErrorPopup = true;
-                            }
-                            else
-                            {
-                                viewPageId = commentInput; viewPageStep = 1; commentInput.clear();
-                            }
+                            viewPageId = commentInput; viewPageStep = 1; commentInput.clear();
+                        }
+                    }
+                }
+
+                // =====================================================
+                // LIKED LIST — Enter key handler
+                // =====================================================
+                else if (currentScreen == LIKED_LIST && likedListStep == 0)
+                {
+                    if (commentInput.empty() || isBlank(commentInput))
+                    {
+                        popupMessage = "Please enter a Post ID.";
+                        showErrorPopup = true;
+                    }
+                    else
+                    {
+                        // Validate the post actually exists
+                        Post* chk = backend.findPost(commentInput);
+                        if (!chk)
+                        {
+                            popupMessage = "Post '" + commentInput + "' does not exist!";
+                            showErrorPopup = true;
+                        }
+                        else
+                        {
+                            likedListPostId = commentInput;
+                            likedListStep = 1;
+                            commentInput.clear();
                         }
                     }
                 }
@@ -1272,96 +1169,65 @@ void SFMLUI::handleEvents()
                 viewPageStep = 0; viewPageId = "";
             }
 
+            // Backspace to go back on liked list results
+            if (e.key.code == Keyboard::BackSpace && currentScreen == LIKED_LIST && likedListStep == 1)
+            {
+                likedListStep = 0; likedListPostId = ""; commentInput.clear(); typingInInput = true;
+            }
+
             int cnt = backend.getPostCount();
             if (e.key.code == Keyboard::Down && selectedPost < cnt - 1) selectedPost++;
-            if (e.key.code == Keyboard::Up && selectedPost > 0)     selectedPost--;
+            if (e.key.code == Keyboard::Up && selectedPost > 0)       selectedPost--;
         }
     }
 }
 
-// ======================
-// DRAW UI - FIXED
-// ======================
-void SFMLUI::drawUI()
+// DRAW UI
+
+void SocialNetworkingApp::drawUI()
 {
     window.clear(bgColor);
     drawSidebar();
 
     switch (currentScreen)
     {
-    case HOME:
-        drawHomeFeed();
-        break;
+    case HOME:        drawHomeFeed();                                              break;
+    case POST_VIEW:   drawPostCard(); drawInputBox(); drawStatusMessage();         break;
+    case PROFILE:     drawGenericScreen("My Profile", buildProfileContent(backend));  break;
+    case TIMELINE:    drawGenericScreen("Timeline", buildTimelineContent(backend)); break;
+    case MEMORIES:    drawGenericScreen("Memories", buildMemoriesContent(backend)); break;
+    case SHARE_MEMORY:drawShareMemoryScreen();                                    break;
+    case FRIENDS:     drawGenericScreen("Friend List", buildFriendContent(backend));   break;
+    case LIKED_PAGES: drawGenericScreen("My Liked Pages", buildLikedPagesContent(backend)); break;
+    case PAGES:       drawViewPageScreen();                                       break;
 
-    case POST_VIEW:
-        drawPostCard();
-        drawInputBox();
-        drawStatusMessage();
-        break;
-
-    case PROFILE:
-        drawGenericScreen("My Profile", buildProfileContent(backend));
-        break;
-
-    case TIMELINE:
-        drawGenericScreen("Timeline", buildTimelineContent(backend));
-        break;
-
-    case MEMORIES:
-        drawGenericScreen("Memories", buildMemoriesContent(backend));
-        break;
-
-    case SHARE_MEMORY:
-        drawShareMemoryScreen();
-        break;
-
-    case FRIENDS:
-        drawGenericScreen("Friend List", buildFriendContent(backend));
-        break;
-
-    case LIKED_PAGES:
-        drawGenericScreen("My Liked Pages", buildLikedPagesContent(backend));
-        break;
-
-    case PAGES:
-        drawViewPageScreen();
-        break;
-
-    case LIKED_LIST:
-        drawGenericScreen("Who Liked My Posts", buildLikedListContent(backend));
-        break;
+        // ---- FIXED: now calls drawLikedListScreen() ----
+    case LIKED_LIST:  drawLikedListScreen();                                      break;
 
     case SET_USER:
         drawGenericScreen("Set User",
             "Type user ID then press Enter.\n\nCurrent user: "
-            + (backend.getCurrentUser()
-                ? backend.getCurrentUser()->getName() : "none"));
-        drawInputBox();
-        drawStatusMessage();
+            + (backend.getCurrentUser() ? backend.getCurrentUser()->getName() : "none"));
+        drawInputBox(); drawStatusMessage();
         break;
 
     case SET_DATE:
         drawGenericScreen("Set Date",
-            "Type:  DD MM YYYY  then press Enter.\n\n"
-            "Example: 15 11 2017\n\n"
-            "Current Date: " +
-            to_string(backend.getSystemDay()) + "/" +
-            to_string(backend.getSystemMonth()) + "/" +
-            to_string(backend.getSystemYear()));
-        drawInputBox();
-        drawStatusMessage();
+            "Type:  DD MM YYYY  then press Enter.\n\nExample: 15 11 2017\n\nCurrent Date: "
+            + to_string(backend.getSystemDay()) + "/"
+            + to_string(backend.getSystemMonth()) + "/"
+            + to_string(backend.getSystemYear()));
+        drawInputBox(); drawStatusMessage();
         break;
     }
 
     drawErrorPopup();
-
     window.display();
 }
 
-// ======================
 // RUN
-// ======================
-void SFMLUI::run()
+
+void SocialNetworkingApp::run()
 {
     while (window.isOpen())
     {
