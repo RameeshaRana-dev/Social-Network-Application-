@@ -314,7 +314,7 @@ void AppUI::viewProfile()
 		delete[] userPosts;
 		return;
 	}
-
+	//when count > 0
 	for (int i = 0; i < count - 1; i++)
 	{
 		for (int j = 0; j < count - i - 1; j++)
@@ -329,12 +329,12 @@ void AppUI::viewProfile()
 				swapNeeded = true;
 			else if (a->getYear() == b->getYear())
 			{
-				// Compare by month
+				// When year same -> compare by month
 				if (a->getMonth() < b->getMonth())
 					swapNeeded = true;
 				else if (a->getMonth() == b->getMonth())
 				{
-					// Compare by day
+					// when month same -> compare by day
 					if (a->getDay() < b->getDay())
 						swapNeeded = true;
 				}
@@ -378,13 +378,17 @@ int AppUI::getValidChoice(int min, int max)
 			return choice;
 		}
 
-		cout << "Invalid choice! Please enter between "
-			<< min << " and " << max << ".\n";
+		cout << "Invalid choice! Please enter between " << min << " and " << max << ".\n";
 	}
 }  
 
 void AppUI::run()
 {
+	if (backend == nullptr)
+	{
+		cout << "\nBackend not connected!\n";
+		return;
+	}
 	while (true)
 	{
 		cout << "\n==============================\n";
@@ -404,13 +408,14 @@ void AppUI::run()
 		cout << "14. Exit\n";
 		cout << "==============================\n";
 
-		choice = getValidChoice(1, 14);
+		int choice = getValidChoice(1, 14);
 		switch (choice)
 		{
 		case 1:
+		{
 			viewHome();
 			break;
-
+		}
 		case 2:
 		{
 			string postId;
@@ -426,6 +431,7 @@ void AppUI::run()
 			cout << "Enter post ID: ";
 			cin >> postId;
 			cin.ignore();
+			cout << "Enter comment text: ";
 			getline(cin, text);
 			backend->addComment(postId, text);
 			break;
@@ -448,11 +454,11 @@ void AppUI::run()
 			backend->ViewPage(pageId);
 			break;
 		}
-
 		case 6:
+		{
 			backend->SeeMemory();
 			break;
-
+		}
 		case 7:
 		{
 			string postId;
@@ -468,23 +474,26 @@ void AppUI::run()
 			cout << "Enter post ID: ";
 			cin >> postId;
 			cin.ignore();
+			cout << "Enter memory text: ";
 			getline(cin, text);
 			backend->shareMemory(postId, text);
 			break;
 		}
-
 		case 9:
+		{
 			viewLikedPages();
 			break;
-
+		}
 		case 10:
+		{
 			viewProfile();
 			break;
-
+		}
 		case 11:
+		{
 			viewFriendList();
 			break;
-
+		}
 		case 12:
 		{
 			string newId;
@@ -508,25 +517,57 @@ void AppUI::run()
 		{
 			int d, m, y;
 
-			cout << "Enter day: ";
-			cin >> d;
+			while (true)
+			{
+				cout << "Enter day: ";
+				cin >> d;
 
-			cout << "Enter month: ";
-			cin >> m;
+				cout << "Enter month: ";
+				cin >> m;
 
-			cout << "Enter year: ";
-			cin >> y;
+				cout << "Enter year: ";
+				cin >> y;
+
+				// year validation
+				if (y < 1)
+				{
+					cout << "Invalid year!\n";
+					continue;
+				}
+
+				// month validation
+				if (m < 1 || m > 12)
+				{
+					cout << "Invalid month! Month must be between 1 and 12.\n";
+					continue;
+				}
+
+				// day validation
+				int maxDays = getLastDay(m, y);
+
+				if (d < 1 || d > maxDays)
+				{
+					cout << "Invalid day for this month/year!\n";
+					continue;
+				}
+
+				// when valid date
+				break;
+			}
 
 			setSystemDate(d, m, y);
 			break;
 		}
 
 		case 14:
-			cout << "Exiting system... Goodbye!\n";
+		{
+			cout << "Exiting system...Goodbye!\n";
 			return;
-
+		}
 		default:
+		{
 			cout << "Invalid choice!\n";
+		}	
 		}
 	}
 }
