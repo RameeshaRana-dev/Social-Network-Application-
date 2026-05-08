@@ -1235,3 +1235,7 @@ void SocialNetworkingApp::run()
         drawUI();
     }
 }
+SocialNetworkingApp::~SocialNetworkingApp()
+{
+
+}
