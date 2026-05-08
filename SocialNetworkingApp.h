@@ -8,7 +8,7 @@
 using namespace sf;
 using namespace std;
 
-class SFMLUI
+class SocialNetworkingApp
 {
 private:
 
@@ -17,9 +17,9 @@ private:
     AppBackend backend;
     AppUI ui;
 
-    // ======================
+   
     // SCREEN ENUM
-    // ======================
+    
     enum Screen
     {
         HOME,
@@ -30,7 +30,7 @@ private:
         SHARE_MEMORY,
         FRIENDS,
         LIKED_PAGES,
-        PAGES,              // FIXED (was VIEW_PAGE)
+        PAGES,
         LIKED_LIST,
         SET_USER,
         SET_DATE
@@ -38,42 +38,35 @@ private:
 
     Screen currentScreen;
 
-    // ======================
+  
     // GENERAL UI STATE
-    // ======================
+
     float scrollOffset;
     bool typingInInput;
     bool darkMode;
-
-    // ======================
+    int likedListStep;
+    string likedListPostId;
+    void drawLikedListScreen();
     // POPUPS
-    // ======================
-    
-
+   
     bool showErrorPopup;
     string popupMessage;
 
     string statusMessage;
 
-    // ======================
     // SHARE MEMORY STATE
-    // ======================
-    int shareStep;          // 0 = enter post ID
-    // 1 = enter caption
-
+   
+    int shareStep;
     string sharePostId;
 
-    // ======================
     // VIEW PAGE STATE
-    // ======================
-    int viewPageStep;       // 0 = ask page ID
-    // 1 = show page
-
+ 
+    int viewPageStep;
     string viewPageId;
 
-    // ======================
+ 
     // GRAPHICS
-    // ======================
+   
     Font font;
 
     Color bgColor;
@@ -87,9 +80,8 @@ private:
     Sprite likeIcon;
     Sprite commentIcon;
 
-    // ======================
     // INPUT
-    // ======================
+    
     string commentInput;
 
     RectangleShape inputBox;
@@ -97,9 +89,8 @@ private:
 
     int selectedPost;
 
-    // ======================
     // BUTTON STRUCT
-    // ======================
+    
     struct Button
     {
         RectangleShape box;
@@ -111,9 +102,9 @@ private:
         }
     };
 
-    // ======================
+  
     // SIDEBAR BUTTONS
-    // ======================
+    
     Button homeBtn;
     Button timelineBtn;
     Button profileBtn;
@@ -133,16 +124,16 @@ private:
     Button viewPostBtn;
     Button viewLikedListBtn;
 
-    // ======================
+   
     // POST ACTION BUTTONS
-    // ======================
+   
     Button likeActionBtn;
     Button commentActionBtn;
     Button backBtn;
 
-    // ======================
+   
     // FUNCTIONS
-    // ======================
+   
     void setupButton(Button&, string, float, float, Color, Color);
 
     void handleEvents();
@@ -150,7 +141,9 @@ private:
     void drawUI();
 
     void drawSidebar();
+
     void drawPostCard();
+
     void handleLike();
 
     void handleComment();
@@ -167,8 +160,6 @@ private:
 
     void drawErrorPopup();
 
-    
-
     void drawShareMemoryScreen();
 
     void drawViewPageScreen();
@@ -177,7 +168,7 @@ private:
 
 public:
 
-    SFMLUI();
+    SocialNetworkingApp();
 
     void run();
 };
