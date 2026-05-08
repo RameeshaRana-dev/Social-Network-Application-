@@ -169,6 +169,6 @@ private:
 public:
 
     SocialNetworkingApp();
-
+    ~SocialNetworkingApp();
     void run();
 };
